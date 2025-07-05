@@ -31,12 +31,12 @@ window.OverworldMaps = {
                 useShadow: true,
                 isPlayerControlled: true,
             }),
-            npcA: new Person({
-                x: utils.withGrid(7),
-                y: utils.withGrid(9),
-                useShadow: true,
-                src: "./images/characters/people/npc1.png"
-            })
+            // npcA: new Person({
+            //     x: utils.withGrid(7),
+            //     y: utils.withGrid(9),
+            //     useShadow: true,
+            //     src: "./images/characters/people/npc1.png"
+            // })
         }
     }
 }

@@ -9,7 +9,7 @@ class Person extends GameObject {
         this.movingProgressRemaining = 0;
 
         // Overright the direction
-        this.direction = "right";
+        this.direction = "down";
 
         // this is the map for direction update
         this.directionUpdate = {
@@ -26,12 +26,24 @@ class Person extends GameObject {
     // every single frames, if we have state.arrow, instantlly update the movingprogressremaining and tell the person to go to the next cell
     // if the person have done their ways yet then we can not move the person to the next cell
     update(state) {
-        this.updatePosition();
-        
-        if (this.isPlayerControlled && state.arrow && this.movingProgressRemaining === 0) {
-            this.direction = state.arrow;
-            this.movingProgressRemaining += 16;
+        // 1. after we have arrow input then we update gameobject direction to state arrow
+        // 2. += 16 movingprogress and call update sprite
+        // 3. update sprite check movingprogress > 16 then pass the walk with direction to sprite and update animation
+        // 4. 
+        if (this.movingProgressRemaining > 0) {
+            this.updatePosition();
+        } else {
+            if (this.isPlayerControlled && state.arrow && this.movingProgressRemaining === 0) {
+                this.direction = state.arrow;
+                this.movingProgressRemaining += 16;
+            }
+
+            // if movingprogress = 0 then the person's animation will be set idle
+            this.updateSprite();
         }
+        
+        
+        
     }
 
 
@@ -43,5 +55,14 @@ class Person extends GameObject {
             this[property] += change;
             this.movingProgressRemaining -= 1;
         }
+    }
+
+    updateSprite() {
+        if (this.movingProgressRemaining > 0) {
+            this.sprite.updateCurrentAnimation(`walk-`+this.direction);
+            return;
+        }
+
+        this.sprite.updateCurrentAnimation(`idle-`+this.direction);
     }
 }
