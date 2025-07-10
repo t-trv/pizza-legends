@@ -11,12 +11,12 @@ class OverworldMap {
         this.upperImage.src = config.upperSrc;
     }
 
-    drawLowerImage(ctx) {
-        ctx.drawImage(this.lowerImage, 0, 0);
+    drawLowerImage(ctx, cameraPerson) {
+        ctx.drawImage(this.lowerImage, 0 + utils.withGrid(10.5) - cameraPerson.x , 0  + utils.withGrid(6) - cameraPerson.y);
     }
 
-    drawUpperImage(ctx) {
-        ctx.drawImage(this.upperImage, 0, 0);
+    drawUpperImage(ctx, cameraPerson) {
+        ctx.drawImage(this.upperImage, 0 + utils.withGrid(10.5) - cameraPerson.x , 0  + utils.withGrid(6) - cameraPerson.y);
     }
 }
 
@@ -31,12 +31,12 @@ window.OverworldMaps = {
                 useShadow: true,
                 isPlayerControlled: true,
             }),
-            // npcA: new Person({
-            //     x: utils.withGrid(7),
-            //     y: utils.withGrid(9),
-            //     useShadow: true,
-            //     src: "./images/characters/people/npc1.png"
-            // })
+            npcA: new Person({
+                x: utils.withGrid(7),
+                y: utils.withGrid(9),
+                useShadow: true,
+                src: "./images/characters/people/npc1.png"
+            })
         }
     }
 }

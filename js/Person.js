@@ -26,10 +26,9 @@ class Person extends GameObject {
     // every single frames, if we have state.arrow, instantlly update the movingprogressremaining and tell the person to go to the next cell
     // if the person have done their ways yet then we can not move the person to the next cell
     update(state) {
-        // 1. after we have arrow input then we update gameobject direction to state arrow
+        // 1. after we have arrow input then we update gameobject direction = state arrow
         // 2. += 16 movingprogress and call update sprite
-        // 3. update sprite check movingprogress > 16 then pass the walk with direction to sprite and update animation
-        // 4. 
+        // 3. updateSprite check movingprogress > 16 then pass the walk with direction to sprite and update animation
         if (this.movingProgressRemaining > 0) {
             this.updatePosition();
         } else {
@@ -38,7 +37,7 @@ class Person extends GameObject {
                 this.movingProgressRemaining += 16;
             }
 
-            // if movingprogress = 0 then the person's animation will be set idle
+            // if movingprogress = 0 then the person's animation will be set as idle
             this.updateSprite();
         }
         

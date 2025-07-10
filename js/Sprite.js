@@ -42,7 +42,7 @@ class Sprite {
     }
 
     // we use this method to update the currrent animation
-    // use it from person updateSprite
+    // use it from person updateSprite (person.js)
     updateCurrentAnimation(animation) {
         if (animation !== this.currentAnimation) {
             this.currentAnimation = animation;
@@ -58,8 +58,6 @@ class Sprite {
             this.animationFrameProgress -= 1;
             return;
         }
-
-        console.log(this.currentAnimation)
         
         // if frame was out of animations -> reset animationFrame to zero
         this.currentAnimationFrame += 1;
@@ -72,9 +70,9 @@ class Sprite {
     }
 
 
-    draw(ctx) {
-        const x = this.gameObject.x - 8;
-        const y = this.gameObject.y - 18;
+    draw(ctx, cameraPerson) {
+        const x = this.gameObject.x - 8 + utils.withGrid(10.5) - cameraPerson.x;
+        const y = this.gameObject.y - 18 + utils.withGrid(6) - cameraPerson.y;
 
         const [frameX, frameY] = this.getFrame;
 
@@ -90,8 +88,8 @@ class Sprite {
             32,32
         )
 
-        // every single frame, we call draw method and then call updateAniamtionProgress method
-        // every 8 frames, we next currentAnimationFrame and show the next animation
+        // 1. every single frame, we call draw method and then call updateAniamtionProgress method
+        // 2. every 8 frames, we plus 1 currentAnimationFrame and show the next animation
         this.updateAnimationProgress();
     }
 }
