@@ -32,17 +32,36 @@ class Person extends GameObject {
         if (this.movingProgressRemaining > 0) {
             this.updatePosition();
         } else {
-            if (this.isPlayerControlled && state.arrow && this.movingProgressRemaining === 0) {
-                this.direction = state.arrow;
-                this.movingProgressRemaining += 16;
+
+            // More case will come here
+            // 
+            // 
+
+            // this case: we're keyboard ready and have an arrow pressed  
+            if (this.isPlayerControlled && state.arrow) {
+                this.startBehavior(state, {
+                    type: "walk",
+                    direction: state.arrow,
+                })
             }
 
             // if movingprogress = 0 then the person's animation will be set as idle
             this.updateSprite();
         }
-        
-        
-        
+    }
+
+    startBehavior(state, behavior) {
+        this.direction = behavior.direction;
+
+        if (behavior.type == "walk") {
+            if (state.map.isSpaceTaken(this.x, this.y, this.direction)) {
+                return;
+            }
+            this.movingProgressRemaining += 16;
+
+            // if the person is going to walk then we move the wall follow that person
+            state.map.moveWall(this.x, this.y, this.direction);
+        }
     }
 
 

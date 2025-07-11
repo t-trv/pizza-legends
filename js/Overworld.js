@@ -30,10 +30,9 @@ class Overworld {
             // update the state of gameobject
             gameObj.update({
                 arrow: this.directionInput.getDirection,
-                obj: gameObj
+                map: this.map,
             })
         })
-
 
         // draw the lower map's img
         this.map.drawLowerImage(this.ctx, cameraPerson);
@@ -55,6 +54,8 @@ class Overworld {
 
     init() {
         this.map = new OverworldMap(window.OverworldMaps.DemoRoom);
+        this.map.mountObjects();
+        console.log(this.map.walls);
         
         // Init the direction input listener, every single time we put down an arrow key, we have direction
         // example: this.directionInput.getDirection = "down" 
