@@ -13,6 +13,9 @@ class OverworldMap {
 
         // Initial walls
         this.walls = config.walls || {};
+
+        // Initial cutscene playing, if we have a global cutsence, it's will be set true, false by default
+        this.isCutscenePlaying = true;
     }
 
     drawLowerImage(ctx, cameraPerson) {
@@ -43,9 +46,34 @@ class OverworldMap {
     }
 
     mountObjects() {
-        Object.values(this.gameObjects).forEach(gameObj => {
+        Object.keys(this.gameObjects).forEach(key => {
+
+            // Identify the gameObj by thier key when they are created
+            // create gameobj's id automatic
+            let gameObj = this.gameObjects[key]
+            gameObj.id = key;
+            
+            // call the mount method (gameobj)
             gameObj.mount(this);
         })
+    }
+
+    // this method is called from overworld and if the overworld has cutscene then we kick off a loop of events array
+    // iscutsceneplaying will be set true, and dobehaviorloop gonna stop
+    // after the cutsence has been done, the cutsenceplaying will be set true back
+    // and then we call the mountObjects method to dobehaviorloop again!
+    async startCutscene(events) {
+        this.isCutscenePlaying = true;
+        
+        // start a loop of async events
+        // await each one
+        for (let i = 0; i < events.length; i++) {
+            const eventHandler = new OverworldEvent({map: this, event: events[i]});
+            await eventHandler.init();
+        }
+
+        this.isCutscenePlaying = false;
+        this.mountObjects();
     }
 }
 
@@ -64,7 +92,26 @@ window.OverworldMaps = {
                 x: utils.withGrid(7),
                 y: utils.withGrid(9),
                 useShadow: true,
-                src: "./images/characters/people/npc1.png"
+                src: "./images/characters/people/npc1.png",
+                behaviorLoop: [
+                    { type: "stand", direction: "left", time: 800 },
+                    { type: "stand", direction: "up", time: 800 },
+                    { type: "stand", direction: "right", time: 1200 },
+                    { type: "stand", direction: "up", time: 300 },
+                ]
+            }),
+            npcB: new Person({
+                x: utils.withGrid(3),
+                y: utils.withGrid(7),
+                useShadow: true,
+                src: "./images/characters/people/npc2.png",
+                behaviorLoop: [
+                    { type: "walk", direction: "left" },
+                    { type: "stand", direction: "down", time: 800 },
+                    { type: "walk", direction: "up" },
+                    { type: "walk", direction: "right" },
+                    { type: "walk", direction: "down" },
+                ]
             })
         },
         walls: {

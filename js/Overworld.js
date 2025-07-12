@@ -55,7 +55,6 @@ class Overworld {
     init() {
         this.map = new OverworldMap(window.OverworldMaps.DemoRoom);
         this.map.mountObjects();
-        console.log(this.map.walls);
         
         // Init the direction input listener, every single time we put down an arrow key, we have direction
         // example: this.directionInput.getDirection = "down" 
@@ -64,5 +63,13 @@ class Overworld {
 
         // Start the gameeee!
         this.startGameLoop();
+
+        this.map.startCutscene([
+            { who: "hero", type: "walk", direction: "down" },
+            { who: "hero", type: "walk", direction: "down" },
+            { who: "hero", type: "walk", direction: "down" },
+            { who: "hero", type: "stand", direction: "right", time: 100 },
+            { who: "npcA", type: "walk", direction: "left" },
+        ])
     }
 }

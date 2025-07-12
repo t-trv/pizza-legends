@@ -5,11 +5,11 @@ class Person extends GameObject {
     constructor(config) {
         super(config);
 
+        // Overright the direction from GameObject class
+        this.direction = "down";
+
         // this gonna be += 16 because we need to keep track the person have to go to the next cell, and can't do anything else before go to there
         this.movingProgressRemaining = 0;
-
-        // Overright the direction
-        this.direction = "down";
 
         // this is the map for direction update
         this.directionUpdate = {
@@ -38,7 +38,7 @@ class Person extends GameObject {
             // 
 
             // this case: we're keyboard ready and have an arrow pressed  
-            if (this.isPlayerControlled && state.arrow) {
+            if (this.isPlayerControlled && state.arrow && !state.map.isCutscenePlaying) {
                 this.startBehavior(state, {
                     type: "walk",
                     direction: state.arrow,
@@ -53,14 +53,31 @@ class Person extends GameObject {
     startBehavior(state, behavior) {
         this.direction = behavior.direction;
 
-        if (behavior.type == "walk") {
+        // Logic for walk behavior
+        if (behavior.type === "walk") {
             if (state.map.isSpaceTaken(this.x, this.y, this.direction)) {
+                // behaviorloop if has retry define, call start behavior again again and again
+                if (behavior.retry) {
+                    setTimeout(() => {
+                        this.startBehavior(state, behavior);
+                    }, 1000)
+                };
                 return;
             }
             this.movingProgressRemaining += 16;
 
             // if the person is going to walk then we move the wall follow that person
             state.map.moveWall(this.x, this.y, this.direction);
+            this.updateSprite();
+        }
+
+        // Logic for stand behavior
+        if (behavior.type === "stand") {
+            setTimeout(() => {
+                utils.emitEvent("PersonStandComplete", {
+                    whoId: this.id,
+                })
+            }, behavior.time)
         }
     }
 
@@ -72,6 +89,16 @@ class Person extends GameObject {
             const [ property, change ] = this.directionUpdate[this.direction];
             this[property] += change;
             this.movingProgressRemaining -= 1;
+
+            // When the person finished their walk, we dispatch an custom event for OverworldEvent listener
+            if (this.movingProgressRemaining === 0) {
+                // we finished the walk
+                // dispatch an event for OverworldEvent listener: the person is complete their walking so resolve and..
+                // ..do the next behavior loop
+                utils.emitEvent("PersonWalkingComplete", {
+                    whoId: this.id
+                })
+            }
         }
     }
 
