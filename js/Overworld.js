@@ -47,14 +47,34 @@ class Overworld {
         this.map.drawUpperImage(this.ctx, cameraPerson);
     }
 
+    bindActionInput() {
+        new KeyPressListener("Enter", () => {
+            // Check is there a person to talk to
+            this.map.checkForActionCutscene();
 
+        })
+    }
 
+    bindHeroPositionCheck() {
+        document.addEventListener("PersonWalkingComplete", e => {
+            if (e.detail.whoId === "hero") {
+                // Hero's position has changed
+                this.map.checkForFootstepCutscene();
+            }
+        })
+    }
 
-
+    startMap(mapConfig) {
+        this.map = new OverworldMap(mapConfig);
+        this.map.overworld = this;
+        this.map.mountObjects();
+    }
 
     init() {
-        this.map = new OverworldMap(window.OverworldMaps.DemoRoom);
-        this.map.mountObjects();
+        this.startMap(window.OverworldMaps.DemoRoom);
+
+        this.bindActionInput();
+        this.bindHeroPositionCheck();
         
         // Init the direction input listener, every single time we put down an arrow key, we have direction
         // example: this.directionInput.getDirection = "down" 
@@ -64,12 +84,13 @@ class Overworld {
         // Start the gameeee!
         this.startGameLoop();
 
-        this.map.startCutscene([
-            { who: "hero", type: "walk", direction: "down" },
-            { who: "hero", type: "walk", direction: "down" },
-            { who: "hero", type: "walk", direction: "down" },
-            { who: "hero", type: "stand", direction: "right", time: 100 },
-            { who: "npcA", type: "walk", direction: "left" },
-        ])
+        // this.map.startCutscene([
+        //     { who: "hero", type: "walk", direction: "down" },
+        //     { who: "hero", type: "walk", direction: "down" },
+        //     { who: "hero", type: "walk", direction: "down" },
+        //     { who: "hero", type: "stand", direction: "right", time: 100 },
+        //     { who: "npcA", type: "walk", direction: "left" },
+        //     { who: "npcA", type: "textMessage", text: "Hello trvv!" },
+        // ])
     }
 }

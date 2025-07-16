@@ -46,6 +46,25 @@ class OverworldEvent {
         document.addEventListener("PersonWalkingComplete", eventHandler);
     }
 
+    textMessage(resolve) {
+        if (this.event.faceHero) {
+            const whoFace = this.map.gameObjects[this.event.faceHero];
+            whoFace.direction = utils.getOppositeDirection(this.map.gameObjects.hero.direction);
+        }
+
+        const message = new TextMessage({
+            who: this.event.who,
+            text: this.event.text,
+            onComplete: resolve,
+        })
+        message.init(document.querySelector(".game-container"));
+    }
+
+    changeMap(resolve) {
+        this.map.overworld.startMap(window.OverworldMaps[this.event.mapName]);
+        resolve();
+    }
+
     init() {
         return new Promise(resolve => {
             this[this.event.type](resolve);

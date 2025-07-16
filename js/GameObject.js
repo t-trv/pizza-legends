@@ -14,6 +14,12 @@ class GameObject {
         this.behaviorLoopIndex = 0;
     }
 
+    getPosition() {
+        const x = this.x;
+        const y = this.y;
+        return {x,y};
+    }
+
     update() {
 
     }
@@ -32,7 +38,7 @@ class GameObject {
 
     async doBehaviorEvent(map) {
         // if gameobject has no behaviorloop or global cutsence is playing => we gonna stop do behavior loop
-        if (this.behaviorLoop.length === 0 || map.isCutscenePlaying) {
+        if (this.behaviorLoop.length === 0 || map.isCutscenePlaying || this.isStanding) {
             return;
         }
 

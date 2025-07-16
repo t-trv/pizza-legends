@@ -6,10 +6,13 @@ class Person extends GameObject {
         super(config);
 
         // Overright the direction from GameObject class
-        this.direction = "down";
+        this.direction = config.direction || "down";
 
         // this gonna be += 16 because we need to keep track the person have to go to the next cell, and can't do anything else before go to there
         this.movingProgressRemaining = 0;
+
+        // flag
+        this.isStanding = false;
 
         // this is the map for direction update
         this.directionUpdate = {
@@ -20,6 +23,8 @@ class Person extends GameObject {
         }
 
         this.isPlayerControlled = config.isPlayerControlled || false;
+
+        this.talking = config.talking || [];
     }
 
     // state is an object contains arrow from player input, map reference,..
@@ -37,7 +42,8 @@ class Person extends GameObject {
             // 
             // 
 
-            // this case: we're keyboard ready and have an arrow pressed  
+            // this case: we're keyboard ready and have an arrow pressed 
+            // if cutscene is playing the hero can not move
             if (this.isPlayerControlled && state.arrow && !state.map.isCutscenePlaying) {
                 this.startBehavior(state, {
                     type: "walk",
@@ -73,10 +79,12 @@ class Person extends GameObject {
 
         // Logic for stand behavior
         if (behavior.type === "stand") {
+            this.isStanding = true;
             setTimeout(() => {
                 utils.emitEvent("PersonStandComplete", {
                     whoId: this.id,
                 })
+                this.isStanding = false;
             }, behavior.time)
         }
     }

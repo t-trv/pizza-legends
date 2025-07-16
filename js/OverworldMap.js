@@ -1,5 +1,8 @@
 class OverworldMap {
     constructor(config) {
+        // reference overworld
+        this.overworld = null;
+
         // Set up the reference to gameobject 
         this.gameObjects = config.gameObjects;
 
@@ -14,8 +17,12 @@ class OverworldMap {
         // Initial walls
         this.walls = config.walls || {};
 
+        // Initial cutscene spaces
+        this.cutsceneSpaces = config.cutsceneSpaces || {};
+
         // Initial cutscene playing, if we have a global cutsence, it's will be set true, false by default
-        this.isCutscenePlaying = true;
+        this.isCutscenePlaying = false;
+
     }
 
     drawLowerImage(ctx, cameraPerson) {
@@ -63,6 +70,8 @@ class OverworldMap {
     // after the cutsence has been done, the cutsenceplaying will be set true back
     // and then we call the mountObjects method to dobehaviorloop again!
     async startCutscene(events) {
+        // this method below gonna stop doBehaviorLoop from gameobjects
+        // so we have to reset gameobject dobehaviorloop
         this.isCutscenePlaying = true;
         
         // start a loop of async events
@@ -71,9 +80,41 @@ class OverworldMap {
             const eventHandler = new OverworldEvent({map: this, event: events[i]});
             await eventHandler.init();
         }
-
         this.isCutscenePlaying = false;
-        this.mountObjects();
+        
+        // after startsceen stopped we have to reset gameobject dobehaviorloop
+        Object.values(this.gameObjects).forEach(gameObj => {
+            gameObj.doBehaviorEvent(this);
+        })
+    }
+
+    // this method will be called from overworld-bindActionCutscene
+    // check xem co person nao de noi chuyen khong, neu co thi startcutsence
+    async checkForActionCutscene() {
+        const hero = this.gameObjects.hero;
+        const nextCoord = utils.nextPosition(hero.x, hero.y, hero.direction);
+        // Object.values(this.gameObjects).forEach(gameObj => {
+        //     if (JSON.stringify(gameObj.getPosition()) == JSON.stringify(nextCoord)) {
+        //         console.log("dang noi chuyen")
+        //     }
+        // })
+        const match = Object.values(this.gameObjects).find(gameObj => {
+            return `${gameObj.x},${gameObj.y}` === `${nextCoord.x},${nextCoord.y}`;
+        })
+
+        if (!this.isCutscenePlaying && match && match.talking.length) {
+            this.startCutscene(match.talking[0].events)
+        }
+    }
+
+    // this method will be called from overworld-bindHeroPositionCheck
+    // check xem position cua thang hero co trung voi cutscenespace nao khong, neu co thi startcutsence
+    async checkForFootstepCutscene() {
+        const hero = this.gameObjects.hero;
+        const match = this.cutsceneSpaces[`${hero.x},${hero.y}`]
+        if (!this.isCutscenePlaying && match && match.length) {
+            this.startCutscene(match[0].events)
+        }
     }
 }
 
@@ -98,20 +139,28 @@ window.OverworldMaps = {
                     { type: "stand", direction: "up", time: 800 },
                     { type: "stand", direction: "right", time: 1200 },
                     { type: "stand", direction: "up", time: 300 },
+                ],
+                talking: [
+                    {
+                        events: [
+                            { who: "Lisa", type: "textMessage", text: "Xin chao trvv!", faceHero: "npcA"},
+                            { who: "Lisa", type: "textMessage", text: "Di cho khac choi, dang ban valorant roi" },
+                        ]
+                    }
                 ]
             }),
             npcB: new Person({
-                x: utils.withGrid(3),
-                y: utils.withGrid(7),
+                x: utils.withGrid(8),
+                y: utils.withGrid(5),
                 useShadow: true,
                 src: "./images/characters/people/npc2.png",
-                behaviorLoop: [
-                    { type: "walk", direction: "left" },
-                    { type: "stand", direction: "down", time: 800 },
-                    { type: "walk", direction: "up" },
-                    { type: "walk", direction: "right" },
-                    { type: "walk", direction: "down" },
-                ]
+                // behaviorLoop: [
+                //     { type: "walk", direction: "left" },
+                //     { type: "stand", direction: "down", time: 800 },
+                //     { type: "walk", direction: "up" },
+                //     { type: "walk", direction: "right" },
+                //     { type: "walk", direction: "down" },
+                // ]
             })
         },
         walls: {
@@ -119,6 +168,63 @@ window.OverworldMaps = {
             [utils.asGridCoord(8,6)] : true,
             [utils.asGridCoord(7,7)] : true,
             [utils.asGridCoord(8,7)] : true,
+        },
+        cutsceneSpaces: {
+            [utils.asGridCoord(7,4)] : [
+                {
+                    events: [
+                        { who: "npcB", type: "walk", direction: "left" },
+                        { who: "npcB", type: "stand", direction: "up", time: 100 },
+                        { who: "Pony", type: "textMessage", text: "Di ra cho khac coi" },
+                        { who: "npcB", type: "walk", direction: "right" },
+                        { who: "npcB", type: "stand", direction: "down", time: 100 },
+                        { who: "hero", type: "walk", direction: "down" },
+                        { who: "hero", type: "walk", direction: "left" },
+                    ]
+                }
+            ],
+            [utils.asGridCoord(5,10)] : [
+                {
+                    events: [
+                        { type: "changeMap", mapName: "Kitchen" }
+                    ]
+                }
+            ]
+        }
+    },
+    Kitchen: {
+        lowerSrc: "/images/maps/KitchenLower.png",
+        upperSrc: "/images/maps/KitchenUpper.png",
+        gameObjects: {
+            hero: new Person({
+                x: utils.withGrid(5),
+                y: utils.withGrid(9),
+                direction: "up",
+                useShadow: true,
+                isPlayerControlled: true,
+            }),
+            npcA: new Person({
+                x: utils.withGrid(5),
+                y: utils.withGrid(7),
+                useShadow: true,
+                src: "../images/characters/people/erio.png",
+                talking: [
+                    {
+                        events: [
+                            { who: "Orio", type: "textMessage", text: "Hello there!", faceHero: "npcA" },
+                        ]
+                    },
+                ]
+            })
+        },
+        cutsceneSpaces: {
+            [utils.asGridCoord(5,10)] : [
+                {
+                    events: [
+                        { type: "changeMap", mapName: "DemoRoom" }
+                    ]
+                }
+            ]
         }
     }
 }
