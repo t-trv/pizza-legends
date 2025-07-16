@@ -1,5 +1,7 @@
 class OverworldMap {
     constructor(config) {
+        this.mapId = config.mapId || null;
+
         // reference overworld
         this.overworld = null;
 
@@ -120,6 +122,7 @@ class OverworldMap {
 
 window.OverworldMaps = {
     DemoRoom: {
+        mapId: "DemoRoom",
         lowerSrc: "./images/maps/DemoLower.png",
         upperSrc: "./images/maps/DemoUpper.png",
         gameObjects: {
@@ -129,7 +132,7 @@ window.OverworldMaps = {
                 useShadow: true,
                 isPlayerControlled: true,
             }),
-            npcA: new Person({
+            dang_test_con_nay: new Person({
                 x: utils.withGrid(7),
                 y: utils.withGrid(9),
                 useShadow: true,
@@ -143,7 +146,7 @@ window.OverworldMaps = {
                 talking: [
                     {
                         events: [
-                            { who: "Lisa", type: "textMessage", text: "Xin chao trvv!", faceHero: "npcA"},
+                            { who: "Lisa", type: "textMessage", text: "Xin chao trvv!", faceHero: "dang_test_con_nay"},
                             { who: "Lisa", type: "textMessage", text: "Di cho khac choi, dang ban valorant roi" },
                         ]
                     }
@@ -193,6 +196,7 @@ window.OverworldMaps = {
         }
     },
     Kitchen: {
+        mapId: "Kitchen",
         lowerSrc: "/images/maps/KitchenLower.png",
         upperSrc: "/images/maps/KitchenUpper.png",
         gameObjects: {
@@ -212,19 +216,11 @@ window.OverworldMaps = {
                     {
                         events: [
                             { who: "Orio", type: "textMessage", text: "Hello there!", faceHero: "npcA" },
+                            { who: "npcA", type: "stand", direction: "down", time: 100},
                         ]
                     },
                 ]
             })
-        },
-        cutsceneSpaces: {
-            [utils.asGridCoord(5,10)] : [
-                {
-                    events: [
-                        { type: "changeMap", mapName: "DemoRoom" }
-                    ]
-                }
-            ]
         }
     }
 }

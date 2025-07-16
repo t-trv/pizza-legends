@@ -11,9 +11,16 @@ class TextMessage {
         this.element = document.createElement("div");
         this.element.classList.add("TextMessage");
         this.element.innerHTML = (`
-            <p class="TextMessage_p">${this.who}: ${this.text}</p>    
+            <p class="TextMessage_p"></p>    
             <button class="TextMessage_button">CONTINUE</button>
         `)
+
+        // Init the typewriter effect
+        this.revealingText = new RevealingText({
+            element: this.element.querySelector(".TextMessage_p"),
+            text: this.text,
+        })
+        this.revealingText.init();
 
         this.element.querySelector(".TextMessage_button").addEventListener("click", () => {
             // Close the text message
@@ -27,9 +34,13 @@ class TextMessage {
     }
 
     done() {
-        this.element.remove();
-        this.onComplete();
-        this.actionListener.unbind();
+        if (this.revealingText.isDone) {
+            this.element.remove();
+            this.onComplete();
+            this.actionListener.unbind();
+        } else {
+            this.revealingText.warpToDone();
+        }
     }
     
     init(container) {

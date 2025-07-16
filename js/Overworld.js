@@ -47,6 +47,7 @@ class Overworld {
         this.map.drawUpperImage(this.ctx, cameraPerson);
     }
 
+    // Press Enter -> check the next cell if have a person with their talking
     bindActionInput() {
         new KeyPressListener("Enter", () => {
             // Check is there a person to talk to
@@ -84,13 +85,8 @@ class Overworld {
         // Start the gameeee!
         this.startGameLoop();
 
-        // this.map.startCutscene([
-        //     { who: "hero", type: "walk", direction: "down" },
-        //     { who: "hero", type: "walk", direction: "down" },
-        //     { who: "hero", type: "walk", direction: "down" },
-        //     { who: "hero", type: "stand", direction: "right", time: 100 },
-        //     { who: "npcA", type: "walk", direction: "left" },
-        //     { who: "npcA", type: "textMessage", text: "Hello trvv!" },
-        // ])
+        this.map.startCutscene([
+            // { type: "changeMap", mapName: "Kitchen" }
+        ])
     }
 }
