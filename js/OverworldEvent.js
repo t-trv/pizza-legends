@@ -47,11 +47,13 @@ class OverworldEvent {
     }
 
     textMessage(resolve) {
+        // Handle npc face to hero
         if (this.event.faceHero) {
             const whoFace = this.map.gameObjects[this.event.faceHero];
             whoFace.direction = utils.getOppositeDirection(this.map.gameObjects.hero.direction);
         }
 
+        // init textMessage
         const message = new TextMessage({
             who: this.event.who,
             text: this.event.text,
@@ -71,9 +73,11 @@ class OverworldEvent {
                 sceneTransition.fadeOut();
             }
         })
+    }
 
-
-
+    battle(resolve) {
+        const battle = new Battle()
+        battle.init(document.querySelector(".game-container"));
     }
 
     init() {

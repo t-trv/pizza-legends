@@ -1,7 +1,6 @@
 class SceneTransition {
     constructor() {
         this.element = null;
-
     }
 
     createElement() {
