@@ -54,9 +54,11 @@ class Battle {
     }
 
     init(container) {
+        // create a screen of battle with 2 images: player and enemy
         this.createElement();
         container.appendChild(this.element);
 
+        // loop through of combatants and call the init method
         Object.keys(this.combatants).forEach(key => {
             const combatant = this.combatants[key]
             combatant.id = key;

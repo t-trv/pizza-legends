@@ -54,13 +54,14 @@ class Combatant {
             <p class="Combatant_status"></p>
         `);
 
+        // set up a pizza combatant's image
         this.pizzaElement = document.createElement("img");
         this.pizzaElement.classList.add("Pizza");
         this.pizzaElement.setAttribute("src", this.src);
         this.pizzaElement.setAttribute("alt", this.name);
         this.pizzaElement.setAttribute("data-team", this.team);
 
-
+        // get all of rect inside the life-container & xp-container
         this.hpFills = this.hudElement.querySelectorAll(".Combatant_life-container > rect");
         this.xpFills = this.hudElement.querySelectorAll(".Combatant_xp-container > rect");
     }
@@ -85,9 +86,13 @@ class Combatant {
     }
 
     init(container) {
+        // create a hud of combatant like hp, xp, level, type, name | create combatant image
+        // append child
         this.createElement();
         container.appendChild(this.hudElement)
         container.appendChild(this.pizzaElement)
+
+        // call the update initial state
         this.update()
     }
 }
